@@ -2,13 +2,22 @@ from flask import Flask, render_template, request
 import pickle
 import numpy as np
 
-# Load models and scalers
+import os
+import pickle
+
+# Get the folder where app.py is located
+BASE_DIR = os.path.dirname(__file__)
+
+# Load scalers and models using absolute paths
 try:
-    ms = pickle.load(open("bestmodel_117.pk1", "rb")) # MinMaxScaler or StandardScaler
-    model = pickle.load(open("xgb_model_117.pk1", "rb"))# RandomForest Model
-except FileNotFoundError as e:
-    print(f"Error loading model or scaler: {e}")
-    exit(1)
+    ms_path = os.path.join(BASE_DIR, "bestmodel_117.pk1")
+    model_path = os.path.join(BASE_DIR, "xgb_model_117.pk1")
+
+    ms = pickle.load(open(ms_path, "rb"))       # MinMaxScaler or StandardScaler
+    model = pickle.load(open(model_path, "rb")) # XGBoost / RandomForest Model
+
+except Exception as e:
+    print("Error loading model or scaler:", e)
 
 app = Flask(__name__)
 
@@ -57,6 +66,6 @@ def prediction():
         return f"An error occurred: {e}", 500
 
 if __name__ == "__main__":
-    if __name__ == "__main__":
-     app.run(debug=False)
+    app.run(host="0.0.0.0", port=5000, debug=False)
+
 
